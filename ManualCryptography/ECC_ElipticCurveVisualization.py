@@ -163,7 +163,7 @@ def on_click(event):
 
 def add_points():
     """Add the two points P and Q on the curve"""
-    global R, result, point_R, point_result
+    global R, result, point_R, point_result, info_text
     
     if P is None or Q is None:
         return
@@ -171,10 +171,18 @@ def add_points():
     x_P, y_P = P
     x_Q, y_Q = Q
     
+    # Remove previous info text if it exists
+    if 'info_text' in globals() and info_text:
+        info_text.remove()
+    
     # Special cases
     if x_P == x_Q and y_P == -y_Q:
         # P + Q = O (point at infinity)
         ax.text((x_P + x_Q)/2, 0, 'P + Q = O (point at infinity)', fontsize=12)
+        info_text = ax.text(0.02, 0.98, 'P + Q = Point at infinity', 
+                 transform=ax.transAxes, fontsize=11,
+                 bbox=dict(facecolor='yellow', alpha=0.5),
+                 verticalalignment='top')
         fig.canvas.draw_idle()
         return
     
@@ -211,11 +219,21 @@ def add_points():
     # Draw a dotted line to show the reflection
     ax.plot([x_R, x_R], [y_R, y_result], 'g--', linewidth=1.5)
     
+    # Display intersection point coordinates in the top left corner
+    info_text = ax.text(0.02, 0.98, 
+                f'Points:\nP = ({P[0]:.4f}, {P[1]:.4f})\n'
+                f'Q = ({Q[0]:.4f}, {Q[1]:.4f})\n'
+                f'Intersection = ({x_R:.4f}, {y_R:.4f})\n'
+                f'P + Q = ({result[0]:.4f}, {result[1]:.4f})',
+                transform=ax.transAxes, fontsize=11,
+                bbox=dict(facecolor='yellow', alpha=0.5),
+                verticalalignment='top')
+    
     fig.canvas.draw_idle()
 
 def reset(event):
     """Reset all parameters and points"""
-    global a, b, P, Q, R, result, point_P, point_Q, point_R, point_result
+    global a, b, P, Q, R, result, point_P, point_Q, point_R, point_result, info_text
     a_slider.reset()
     b_slider.reset()
     a = a_slider.val
@@ -231,7 +249,15 @@ def reset(event):
     point_R = None
     point_result = None
     
+    # Clear info text
+    if 'info_text' in globals() and info_text:
+        info_text.remove()
+        info_text = None
+    
     update_plot()
+    
+# Add a global variable for info text
+info_text = None
 
 # Create the main figure
 fig, ax = plt.subplots(figsize=(10, 8))
