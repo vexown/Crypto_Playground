@@ -200,10 +200,8 @@ def add_points():
     ax.plot(x_line, y_line, 'g-', linewidth=1.5)
     
     # Find the third intersection point R
-    # We solve: x³ + ax + b - (lambda*(x-x_P) + y_P)² = 0
-    # The third root x_R can be found using the fact that the sum of roots equals -coeff of x²/coeff of x³
     x_R = lambda_val**2 - x_P - x_Q
-    y_R = lambda_val * (x_P - x_R) - y_P  # Using the line equation
+    y_R = lambda_val * (x_R - x_P) + y_P  # Corrected line
     
     # Plot R
     R = (x_R, y_R)
